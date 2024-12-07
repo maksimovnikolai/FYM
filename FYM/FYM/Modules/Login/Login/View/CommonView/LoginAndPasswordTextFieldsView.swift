@@ -31,14 +31,14 @@ final class LoginAndPasswordTextFieldsView: UIView {
         return button
     }()
     
-    private lazy var logTextField: UITextField = makeTextField(placeholder: "Логин", image: "person.fill")
-    private lazy var passTextField: UITextField = makeTextField(placeholder: "Пароль", image: "lock.fill", isRightViewActive: true)
+    private lazy var loginTextField: UITextField = makeTextField(placeholder: "Логин", image: "person.fill")
+    private lazy var passwordTextField: UITextField = makeTextField(placeholder: "Пароль", image: "lock.fill", isRightViewActive: true)
     
     private lazy var stackWithTextFields: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 20
-        [logTextField, passTextField].forEach { stackView.addArrangedSubview($0) }
+        [loginTextField, passwordTextField].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
     
@@ -58,10 +58,12 @@ final class LoginAndPasswordTextFieldsView: UIView {
 
 private extension LoginAndPasswordTextFieldsView {
     func commonInit() {
-        passTextField.delegate = self
+        loginTextField.delegate = self
+        passwordTextField.delegate = self
         setupSubviews()
         setupConstraints()
-        setupEyeButtonToPasswordTextField()
+        configureLoginTextField()
+        configurePasswordTextField()
     }
     
     func setupSubviews() {
@@ -69,7 +71,7 @@ private extension LoginAndPasswordTextFieldsView {
     }
     
     func setupConstraints() {
-        [logTextField, passTextField].forEach {
+        [loginTextField, passwordTextField].forEach {
             $0.snp.makeConstraints { make in
                 make.height.equalTo(44)
                 make.width.equalToSuperview()
@@ -81,10 +83,17 @@ private extension LoginAndPasswordTextFieldsView {
         }
     }
     
-    func setupEyeButtonToPasswordTextField() {
-        passTextField.rightView = eyeButton
-        passTextField.rightViewMode = .always
-        passTextField.isSecureTextEntry = isSecureTextEntry
+    func configureLoginTextField() {
+        loginTextField.keyboardType = .default
+        loginTextField.returnKeyType = .next
+    }
+    
+    func configurePasswordTextField() {
+        passwordTextField.rightView = eyeButton
+        passwordTextField.keyboardType = .default
+        passwordTextField.rightViewMode = .always
+        passwordTextField.isSecureTextEntry = isSecureTextEntry
+        passwordTextField.returnKeyType = .done
     }
     
     func makeTextField(placeholder: String, image: String, isRightViewActive: Bool = false) -> UITextField {
@@ -94,7 +103,7 @@ private extension LoginAndPasswordTextFieldsView {
     @objc
     func didTapEyeButton() {
         isSecureTextEntry.toggle()
-        passTextField.isSecureTextEntry = isSecureTextEntry
+        passwordTextField.isSecureTextEntry = isSecureTextEntry
         eyeButton.setImage(UIImage(systemName: eyeButtonImage), for: .normal)
     }
 }
@@ -102,6 +111,15 @@ private extension LoginAndPasswordTextFieldsView {
 // MARK: - UITextFieldDelegate
 
 extension LoginAndPasswordTextFieldsView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == loginTextField {
+            passwordTextField.becomeFirstResponder()
+        } else {
+            textField.resignFirstResponder()
+        }
+        return true
+    }
+    
     func textFieldDidChangeSelection(_ textField: UITextField) {
         guard let text = textField.text else { return }
         eyeButton.isEnabled = !text.isEmpty ? true : false
