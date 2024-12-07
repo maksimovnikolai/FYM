@@ -64,12 +64,16 @@ final class CoordinatorFactory: CoordinatorFactoryProtocol {
 // MARK: - ScreenFactoryProtocol / Impl
 
 protocol ScreenFactoryProtocol {
-    func makeLoginController() -> UIViewController
+    func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
 }
 
 
 final class ScreenFactory: ScreenFactoryProtocol {
-    func makeLoginController() -> UIViewController {
-        return UIViewController()
+    func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController {
+        let viewModel = LoginViewModel()
+        viewModel.delegate = delegate
+        let loginViewController = LoginViewController(viewModel: viewModel)
+        loginViewController.delegate = viewModel
+        return loginViewController
     }
 }
