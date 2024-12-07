@@ -13,6 +13,7 @@ final class ApplicationCoordinator: BaseCoordinator {
     private let navigationController: UINavigationController
     private let coordinatorFactory: CoordinatorFactoryProtocol
     private let screenFactory: ScreenFactoryProtocol
+    private var isLogin = false
     
     // MARK: - Init
     
@@ -27,7 +28,14 @@ final class ApplicationCoordinator: BaseCoordinator {
     }
     
     override func start() {
-        runLoginFlow()
+        navigationController.viewControllers = []
+        if isLogin {
+            let vc = UIViewController()
+            vc.view.backgroundColor = .green
+            navigationController.pushViewController(vc, animated: false)
+        } else {
+            runLoginFlow()
+        }
     }
 }
 
@@ -36,6 +44,12 @@ final class ApplicationCoordinator: BaseCoordinator {
 private extension ApplicationCoordinator {
     func runLoginFlow() {
         let loginCoordinator = coordinatorFactory.makeLoginCoordinator(navigation: navigationController, screenFactory: screenFactory)
+        loginCoordinator.finishFlow = { [weak self, weak loginCoordinator] in
+            self?.isLogin = true
+            self?.start()
+            self?.removeDependency(loginCoordinator)
+        }
+        addDependency(loginCoordinator)
         loginCoordinator.start()
     }
 }
