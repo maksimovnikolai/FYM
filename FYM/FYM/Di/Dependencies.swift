@@ -8,11 +8,12 @@
 import UIKit
 
 final class Di {
-    // MARK: - Properties
+    // MARK: - Private properties
     
     private var window: UIWindow?
     private let navigationController: UINavigationController
     private let coordinatorFactory: CoordinatorFactoryProtocol
+    private let screenFactory: ScreenFactoryProtocol
     
     // MARK: - Init
     
@@ -20,6 +21,7 @@ final class Di {
         self.window = window
         navigationController = UINavigationController()
         coordinatorFactory = CoordinatorFactory()
+        screenFactory = ScreenFactory()
     }
 }
 
@@ -34,7 +36,7 @@ extension Di: AppFactoryProtocol {
     func makeKeyWindowWithCoordinator(windowScene: UIWindowScene, completion: (ApplicationCoordinator) -> Void) {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        let coordinator = coordinatorFactory.makeApplicationCoordinator(navigationController: navigationController)
+        let coordinator = coordinatorFactory.makeApplicationCoordinator(navigationController: navigationController, screenFactory: screenFactory)
         completion(coordinator)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
@@ -45,11 +47,33 @@ extension Di: AppFactoryProtocol {
 // MARK: - CoordinatorsFactoryProtocol / Impl
 
 protocol CoordinatorFactoryProtocol {
-    func makeApplicationCoordinator(navigationController: UINavigationController) -> ApplicationCoordinator
+    func makeApplicationCoordinator(navigationController: UINavigationController, screenFactory: ScreenFactoryProtocol) -> ApplicationCoordinator
+    func makeLoginCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> LoginCoordinator
 }
 
 final class CoordinatorFactory: CoordinatorFactoryProtocol {
-    func makeApplicationCoordinator(navigationController: UINavigationController) -> ApplicationCoordinator {
-        ApplicationCoordinator(navigationController: navigationController, coordinatorFactory: self)
+    func makeApplicationCoordinator(navigationController: UINavigationController, screenFactory: ScreenFactoryProtocol) -> ApplicationCoordinator {
+        ApplicationCoordinator(navigationController: navigationController, coordinatorFactory: self, screenFactory: screenFactory)
+    }
+    
+    func makeLoginCoordinator(navigation: UINavigationController, screenFactory: any ScreenFactoryProtocol) -> LoginCoordinator {
+        LoginCoordinator(navigation: navigation, screenFactory: screenFactory)
+    }
+}
+
+// MARK: - ScreenFactoryProtocol / Impl
+
+protocol ScreenFactoryProtocol {
+    func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
+}
+
+
+final class ScreenFactory: ScreenFactoryProtocol {
+    func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController {
+        let viewModel = LoginViewModel()
+        viewModel.delegate = delegate
+        let loginViewController = LoginViewController(viewModel: viewModel)
+        loginViewController.delegate = viewModel
+        return loginViewController
     }
 }
