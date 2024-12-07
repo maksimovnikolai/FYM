@@ -8,6 +8,8 @@
 import UIKit
 
 final class LoginCoordinator: BaseCoordinator {
+    var finishFlow: (() -> Void)?
+    
     // MARK: - Private properties
     
     private let navigation: UINavigationController
@@ -29,8 +31,15 @@ final class LoginCoordinator: BaseCoordinator {
 
 private extension LoginCoordinator {
     func runLoginFlow() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .red
-        navigation.pushViewController(vc, animated: false)
+        let loginViewController = screenFactory.makeLoginController(delegate: self)
+        navigation.pushViewController(loginViewController, animated: false)
+    }
+}
+
+// MARK: - LoginViewModelDelegate
+
+extension LoginCoordinator: LoginViewModelDelegate {
+    func didTapLogInButton() {
+        finishFlow?()
     }
 }
