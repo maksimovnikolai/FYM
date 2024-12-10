@@ -65,8 +65,8 @@ final class CoordinatorFactory: CoordinatorFactoryProtocol {
 
 protocol ScreenFactoryProtocol {
     func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
+    func makeCreateAccountController(delegate: CreateAccountViewModelDelegate) -> UIViewController
 }
-
 
 final class ScreenFactory: ScreenFactoryProtocol {
     func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController {
@@ -75,5 +75,13 @@ final class ScreenFactory: ScreenFactoryProtocol {
         let loginViewController = LoginViewController(viewModel: viewModel)
         loginViewController.delegate = viewModel
         return loginViewController
+    }
+    
+    func makeCreateAccountController(delegate: CreateAccountViewModelDelegate) -> UIViewController {
+        let viewModel = CreateAccountViewModel()
+        viewModel.delegate = delegate
+        let createAccountViewController = CreateAccountViewController(viewModel: viewModel)
+        createAccountViewController.delegate = viewModel
+        return createAccountViewController
     }
 }
