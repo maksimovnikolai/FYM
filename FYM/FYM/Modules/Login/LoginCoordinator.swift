@@ -34,6 +34,12 @@ private extension LoginCoordinator {
         let loginViewController = screenFactory.makeLoginController(delegate: self)
         navigation.pushViewController(loginViewController, animated: false)
     }
+    
+    func runCreateAccountFlow() {
+        let createAccountController = screenFactory.makeCreateAccountController(delegate: self)
+        navigation.pushViewController(createAccountController, animated: true)
+        navigation.navigationBar.topItem?.backButtonTitle = "Назад"
+    }
 }
 
 // MARK: - LoginViewModelDelegate
@@ -42,4 +48,14 @@ extension LoginCoordinator: LoginViewModelDelegate {
     func didTapLogInButton() {
         finishFlow?()
     }
+    
+    func showCreateAccountScreen() {
+        runCreateAccountFlow()
+    }
+}
+
+// MARK: - CreateAccountViewModelDelegate
+
+extension LoginCoordinator: CreateAccountViewModelDelegate {
+    func createAccount() {}
 }
