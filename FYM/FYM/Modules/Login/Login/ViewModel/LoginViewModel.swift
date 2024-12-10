@@ -9,6 +9,7 @@ import UIKit
 
 protocol LoginViewModelDelegate: AnyObject {
     func didTapLogInButton()
+    func showCreateAccountScreen()
 }
 
 protocol LoginViewModelProtocol {}
@@ -24,9 +25,13 @@ extension LoginViewModel: LoginViewModelProtocol {}
 // MARK: - LoginViewDelegate
 
 extension LoginViewModel: LoginViewDelegate {
-    func didTapLoginButton() {}
+    func didTapLoginButton() {
+        delegate?.didTapLogInButton()
+    }
     
-    func didTapCreateAccount() {}
+    func didTapCreateAccount() {
+        delegate?.showCreateAccountScreen()
+    }
     
     func didTapRememberMeButton() {}
     
