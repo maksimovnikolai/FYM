@@ -24,6 +24,7 @@ final class CustomTextField: UITextField {
         setupTextField(placeholder: placeholder, leftImage: leftImage)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
