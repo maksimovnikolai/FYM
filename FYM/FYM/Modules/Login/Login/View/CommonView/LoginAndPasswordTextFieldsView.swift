@@ -72,13 +72,6 @@ private extension LoginAndPasswordTextFieldsView {
     }
     
     func setupConstraints() {
-        [loginTextField, passwordTextField].forEach {
-            $0.snp.makeConstraints { make in
-                make.height.equalTo(44)
-                make.width.equalToSuperview()
-            }
-        }
-        
         stackWithTextFields.snp.makeConstraints { make in
             make.horizontalEdges.verticalEdges.equalToSuperview()
         }

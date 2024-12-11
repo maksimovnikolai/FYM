@@ -121,7 +121,6 @@ private extension CreateAccountView {
     
     func makeTextField(placeholder: String, image: String, isRightViewActive: Bool = false) -> UITextField {
         let tf = CustomTextField(placeholder: placeholder, leftImage: image, isRightViewActive: isRightViewActive)
-        tf.snp.makeConstraints { $0.height.equalTo(Constant.textFieldHeight) }
         return tf
     }
     
@@ -153,6 +152,5 @@ private extension CreateAccountView {
         static let createAccountButtonHeight = 44
         static let createAccountButtonHorizontalEdgesInset = 32
         static let createAccountBottomInset = 64
-        static let textFieldHeight = 44
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 final class CustomTextField: UITextField {
     // MARK: - Private properties
@@ -18,15 +19,23 @@ final class CustomTextField: UITextField {
         right: isRightViewActive ? 50 : 10
     )
     
+    // MARK: - Init
+    
     init(placeholder: String, leftImage: String, isRightViewActive: Bool = false) {
         self.isRightViewActive = isRightViewActive
         super.init(frame: .zero)
         setupTextField(placeholder: placeholder, leftImage: leftImage)
+        setupDefaultHeight()
     }
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+            makeUnderline()
     }
     
     // отвечает за размещение текста внесенного пользователем
@@ -44,8 +53,10 @@ final class CustomTextField: UITextField {
         bounds.inset(by: padding)
     }
     
-    override func draw(_ rect: CGRect) {
-        makeUnderline()
+    private func setupDefaultHeight() {
+        self.snp.makeConstraints { make in
+            make.height.equalTo(44)
+        }
     }
     
     private func setupTextField(placeholder: String, leftImage: String) {
@@ -58,7 +69,7 @@ final class CustomTextField: UITextField {
     
     private func makeUnderline() {
         let layer = CALayer()
-        layer.frame = CGRect(x: 0, y: 44, width: frame.width, height: 1)
+        layer.frame = CGRect(x: 0, y: frame.height, width: frame.width, height: 1)
         layer.backgroundColor = UIColor.black.cgColor
         self.layer.addSublayer(layer)
     }
