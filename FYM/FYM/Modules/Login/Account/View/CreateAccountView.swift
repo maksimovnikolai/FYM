@@ -80,11 +80,23 @@ final class CreateAccountView: UIView {
     }
 }
 
+// MARK: - UITextFieldDelegate
+
+extension CreateAccountView: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard textField.rightView != nil else { return }
+        guard let text = textField.text else { return }
+        textField.rightView?.isHidden = text.isEmpty ? true : false
+    }
+}
+
 // MARK: - Private methods
 
 private extension CreateAccountView {
     func commonInit() {
         backgroundColor = #colorLiteral(red: 0.9648686051, green: 0.6854533553, blue: 0.4176638722, alpha: 1)
+        passwordTextField.delegate = self
+        confirmPasswordTextField.delegate = self
         setupSubviews()
         setupConstraints()
     }

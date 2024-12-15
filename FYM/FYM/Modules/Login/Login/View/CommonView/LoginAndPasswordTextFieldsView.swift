@@ -13,23 +13,7 @@ protocol LoginAndPasswordTextFieldsViewDelegate: AnyObject {}
 final class LoginAndPasswordTextFieldsView: UIView {
     weak var delegate: LoginAndPasswordTextFieldsViewDelegate?
     
-    // MARK: - Private properties
-    
-    private var isSecureTextEntry = true
-    private var eyeButtonImage: String {
-        isSecureTextEntry ? "eye.slash" : "eye"
-    }
-    
     // MARK: - UI components
-    
-    private lazy var eyeButton: UIButton = {
-        let button = UIButton()
-        button.configuration = .plain()
-        button.configuration?.image = UIImage(systemName: eyeButtonImage)
-        button.addTarget(self, action: #selector(didTapEyeButton), for: .touchUpInside)
-        button.isEnabled = false
-        return button
-    }()
     
     private lazy var loginTextField: UITextField = makeTextField(placeholder: "Логин", image: "person.fill")
     private lazy var passwordTextField: UITextField = makeTextField(placeholder: "Пароль", image: "lock.fill", isRightViewActive: true)
@@ -83,22 +67,12 @@ private extension LoginAndPasswordTextFieldsView {
     }
     
     func configurePasswordTextField() {
-        passwordTextField.rightView = eyeButton
         passwordTextField.keyboardType = .default
-        passwordTextField.rightViewMode = .always
-        passwordTextField.isSecureTextEntry = isSecureTextEntry
         passwordTextField.returnKeyType = .done
     }
     
     func makeTextField(placeholder: String, image: String, isRightViewActive: Bool = false) -> UITextField {
         CustomTextField(placeholder: placeholder, leftImage: image, isRightViewActive: isRightViewActive)
-    }
-    
-    @objc
-    func didTapEyeButton() {
-        isSecureTextEntry.toggle()
-        passwordTextField.isSecureTextEntry = isSecureTextEntry
-        eyeButton.setImage(UIImage(systemName: eyeButtonImage), for: .normal)
     }
 }
 
@@ -115,7 +89,8 @@ extension LoginAndPasswordTextFieldsView: UITextFieldDelegate {
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard textField.rightView != nil else { return }
         guard let text = textField.text else { return }
-        eyeButton.isEnabled = !text.isEmpty ? true : false
+        textField.rightView?.isHidden = text.isEmpty ? true : false
     }
 }
