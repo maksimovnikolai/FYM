@@ -27,20 +27,20 @@ final class CreateAccountView: UIView {
     
     private lazy var nameTextField = makeTextField(
         placeholder: Constant.nameTextFiledTitle,
-        image: Constant.nameTextFiledImage
+        leftView: Constant.nameTextFiledImage
     )
     private lazy var emailTextField = makeTextField(
         placeholder: Constant.emailTextFieldTitle,
-        image: Constant.emailTextFieldImage
+        leftView: Constant.emailTextFieldImage
     )
     private lazy var passwordTextField = makeTextField(
         placeholder: Constant.passwordTextFieldTitle,
-        image: Constant.passwordTextFieldImage,
+        leftView: Constant.passwordTextFieldImage,
         isRightViewActive: true
     )
     private lazy var confirmPasswordTextField = makeTextField(
         placeholder: Constant.confirmPasswordTextField,
-        image: Constant.confirmPasswordTextFieldImage,
+        leftView: Constant.confirmPasswordTextFieldImage,
         isRightViewActive: true
     )
     
@@ -80,11 +80,23 @@ final class CreateAccountView: UIView {
     }
 }
 
+// MARK: - UITextFieldDelegate
+
+extension CreateAccountView: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard textField.rightView != nil else { return }
+        guard let text = textField.text else { return }
+        textField.rightView?.isHidden = text.isEmpty ? true : false
+    }
+}
+
 // MARK: - Private methods
 
 private extension CreateAccountView {
     func commonInit() {
         backgroundColor = #colorLiteral(red: 0.9648686051, green: 0.6854533553, blue: 0.4176638722, alpha: 1)
+        passwordTextField.delegate = self
+        confirmPasswordTextField.delegate = self
         setupSubviews()
         setupConstraints()
     }
@@ -119,10 +131,16 @@ private extension CreateAccountView {
         }
     }
     
-    func makeTextField(placeholder: String, image: String, isRightViewActive: Bool = false) -> UITextField {
-        let tf = CustomTextField(placeholder: placeholder, leftImage: image, isRightViewActive: isRightViewActive)
-        tf.snp.makeConstraints { $0.height.equalTo(Constant.textFieldHeight) }
-        return tf
+    func makeTextField(
+        placeholder: String,
+        leftView: String,
+        isRightViewActive: Bool = false
+    ) -> UITextField {
+        CustomTextField(
+            placeholder: placeholder,
+            leftView: leftView,
+            isRightViewActive: isRightViewActive
+        )
     }
     
     @objc
@@ -153,6 +171,5 @@ private extension CreateAccountView {
         static let createAccountButtonHeight = 44
         static let createAccountButtonHorizontalEdgesInset = 32
         static let createAccountBottomInset = 64
-        static let textFieldHeight = 44
     }
 }
