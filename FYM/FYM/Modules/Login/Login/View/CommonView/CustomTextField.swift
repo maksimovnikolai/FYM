@@ -29,10 +29,10 @@ final class CustomTextField: UITextField {
     
     // MARK: - Init
     
-    init(placeholder: String, leftImage: String, isRightViewActive: Bool = false) {
+    init(placeholder: String, leftView: String, isRightViewActive: Bool = false) {
         self.isRightViewActive = isRightViewActive
         super.init(frame: .zero)
-        setupTextField(placeholder: placeholder, leftImage: leftImage)
+        setupTextField(placeholder: placeholder, leftView: leftView)
         setupDefaultHeight()
     }
     
@@ -82,11 +82,11 @@ private extension CustomTextField {
         }
     }
     
-    func setupTextField(placeholder: String, leftImage: String) {
+    func setupTextField(placeholder: String, leftView: String) {
         self.placeholder = placeholder
         font = .boldSystemFont(ofSize: Constant.textFontSize)
         leftViewMode = .always
-        leftView = UIImageView(image: UIImage(systemName: leftImage))
+        self.leftView = UIImageView(image: UIImage(systemName: leftView))
         if isRightViewActive {
             isSecureTextEntry = true
             rightViewMode = .always

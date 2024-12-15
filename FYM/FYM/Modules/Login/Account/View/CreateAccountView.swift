@@ -27,20 +27,20 @@ final class CreateAccountView: UIView {
     
     private lazy var nameTextField = makeTextField(
         placeholder: Constant.nameTextFiledTitle,
-        image: Constant.nameTextFiledImage
+        leftView: Constant.nameTextFiledImage
     )
     private lazy var emailTextField = makeTextField(
         placeholder: Constant.emailTextFieldTitle,
-        image: Constant.emailTextFieldImage
+        leftView: Constant.emailTextFieldImage
     )
     private lazy var passwordTextField = makeTextField(
         placeholder: Constant.passwordTextFieldTitle,
-        image: Constant.passwordTextFieldImage,
+        leftView: Constant.passwordTextFieldImage,
         isRightViewActive: true
     )
     private lazy var confirmPasswordTextField = makeTextField(
         placeholder: Constant.confirmPasswordTextField,
-        image: Constant.confirmPasswordTextFieldImage,
+        leftView: Constant.confirmPasswordTextFieldImage,
         isRightViewActive: true
     )
     
@@ -131,9 +131,16 @@ private extension CreateAccountView {
         }
     }
     
-    func makeTextField(placeholder: String, image: String, isRightViewActive: Bool = false) -> UITextField {
-        let tf = CustomTextField(placeholder: placeholder, leftImage: image, isRightViewActive: isRightViewActive)
-        return tf
+    func makeTextField(
+        placeholder: String,
+        leftView: String,
+        isRightViewActive: Bool = false
+    ) -> UITextField {
+        CustomTextField(
+            placeholder: placeholder,
+            leftView: leftView,
+            isRightViewActive: isRightViewActive
+        )
     }
     
     @objc

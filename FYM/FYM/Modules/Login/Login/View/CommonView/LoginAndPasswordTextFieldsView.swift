@@ -15,13 +15,20 @@ final class LoginAndPasswordTextFieldsView: UIView {
     
     // MARK: - UI components
     
-    private lazy var loginTextField: UITextField = makeTextField(placeholder: "Логин", image: "person.fill")
-    private lazy var passwordTextField: UITextField = makeTextField(placeholder: "Пароль", image: "lock.fill", isRightViewActive: true)
+    private lazy var loginTextField: UITextField = makeTextField(
+        placeholder: Constant.loginTFPlaceholder,
+        leftView: Constant.loginTFLeftView
+    )
+    private lazy var passwordTextField: UITextField = makeTextField(
+        placeholder: Constant.passwordTFPlaceholder,
+        leftView: Constant.passwordTFLeftView,
+        isRightViewActive: true
+    )
     
     private lazy var stackWithTextFields: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 20
+        stackView.spacing = Constant.stackWithTextFieldsSpacing
         [loginTextField, passwordTextField].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -71,8 +78,16 @@ private extension LoginAndPasswordTextFieldsView {
         passwordTextField.returnKeyType = .done
     }
     
-    func makeTextField(placeholder: String, image: String, isRightViewActive: Bool = false) -> UITextField {
-        CustomTextField(placeholder: placeholder, leftImage: image, isRightViewActive: isRightViewActive)
+    func makeTextField(
+        placeholder: String,
+        leftView: String,
+        isRightViewActive: Bool = false
+    ) -> UITextField {
+        CustomTextField(
+            placeholder: placeholder,
+            leftView: leftView,
+            isRightViewActive: isRightViewActive
+        )
     }
 }
 
@@ -92,5 +107,17 @@ extension LoginAndPasswordTextFieldsView: UITextFieldDelegate {
         guard textField.rightView != nil else { return }
         guard let text = textField.text else { return }
         textField.rightView?.isHidden = text.isEmpty ? true : false
+    }
+}
+
+// MARK: - Constant
+
+private extension LoginAndPasswordTextFieldsView {
+    enum Constant {
+        static let loginTFPlaceholder = "Логин"
+        static let loginTFLeftView = "person.fill"
+        static let passwordTFPlaceholder = "Пароль"
+        static let passwordTFLeftView = "lock.fill"
+        static let stackWithTextFieldsSpacing: CGFloat = 20
     }
 }
