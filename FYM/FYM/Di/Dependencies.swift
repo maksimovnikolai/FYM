@@ -49,6 +49,7 @@ extension Di: AppFactoryProtocol {
 protocol CoordinatorFactoryProtocol {
     func makeApplicationCoordinator(navigationController: UINavigationController, screenFactory: ScreenFactoryProtocol) -> ApplicationCoordinator
     func makeLoginCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> LoginCoordinator
+    func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> MainTabBarCoordinator
 }
 
 final class CoordinatorFactory: CoordinatorFactoryProtocol {
@@ -59,6 +60,10 @@ final class CoordinatorFactory: CoordinatorFactoryProtocol {
     func makeLoginCoordinator(navigation: UINavigationController, screenFactory: any ScreenFactoryProtocol) -> LoginCoordinator {
         LoginCoordinator(navigation: navigation, screenFactory: screenFactory)
     }
+    
+    func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: any ScreenFactoryProtocol) -> MainTabBarCoordinator {
+        MainTabBarCoordinator(coordinatorFactory: self, screenFactory: screenFactory, navigation: navigation)
+    }
 }
 
 // MARK: - ScreenFactoryProtocol / Impl
@@ -66,6 +71,7 @@ final class CoordinatorFactory: CoordinatorFactoryProtocol {
 protocol ScreenFactoryProtocol {
     func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
     func makeCreateAccountController(delegate: CreateAccountViewModelDelegate) -> UIViewController
+    func makeMainTabBarController() -> UITabBarController
 }
 
 final class ScreenFactory: ScreenFactoryProtocol {
@@ -83,5 +89,10 @@ final class ScreenFactory: ScreenFactoryProtocol {
         let createAccountViewController = CreateAccountViewController(viewModel: viewModel)
         createAccountViewController.delegate = viewModel
         return createAccountViewController
+    }
+    
+    func makeMainTabBarController() -> UITabBarController {
+        let mainTabBarController = MainTabBarController()
+        return mainTabBarController
     }
 }
