@@ -50,6 +50,7 @@ protocol CoordinatorFactoryProtocol {
     func makeApplicationCoordinator(navigationController: UINavigationController, screenFactory: ScreenFactoryProtocol) -> ApplicationCoordinator
     func makeLoginCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> LoginCoordinator
     func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> MainTabBarCoordinator
+    func makeSettingsCoordinator(screenFactory: ScreenFactoryProtocol) -> SettingsCoordinator
 }
 
 final class CoordinatorFactory: CoordinatorFactoryProtocol {
@@ -64,6 +65,10 @@ final class CoordinatorFactory: CoordinatorFactoryProtocol {
     func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: any ScreenFactoryProtocol) -> MainTabBarCoordinator {
         MainTabBarCoordinator(coordinatorFactory: self, screenFactory: screenFactory, navigation: navigation)
     }
+    
+    func makeSettingsCoordinator(screenFactory: any ScreenFactoryProtocol) -> SettingsCoordinator {
+        SettingsCoordinator(screenFactory: screenFactory)
+    }
 }
 
 // MARK: - ScreenFactoryProtocol / Impl
@@ -72,6 +77,7 @@ protocol ScreenFactoryProtocol {
     func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
     func makeCreateAccountController(delegate: CreateAccountViewModelDelegate) -> UIViewController
     func makeMainTabBarController() -> UITabBarController
+    func makeSettingsController() -> UIViewController
 }
 
 final class ScreenFactory: ScreenFactoryProtocol {
@@ -94,5 +100,12 @@ final class ScreenFactory: ScreenFactoryProtocol {
     func makeMainTabBarController() -> UITabBarController {
         let mainTabBarController = MainTabBarController()
         return mainTabBarController
+    }
+    
+    func makeSettingsController() -> UIViewController {
+        let viewModel = SettingsViewModel()
+        let settingsController = SettingsViewController(viewModel: viewModel)
+        settingsController.delegate = viewModel
+        return settingsController
     }
 }
