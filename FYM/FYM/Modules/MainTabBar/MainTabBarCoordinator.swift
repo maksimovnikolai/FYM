@@ -38,6 +38,13 @@ final class MainTabBarCoordinator: BaseCoordinator {
 private extension MainTabBarCoordinator {
     func runMainTabBarFlow() {
         let mainTabBarController = screenFactory.makeMainTabBarController()
+        let settingsCoordinator = coordinatorFactory.makeSettingsCoordinator(screenFactory: screenFactory)
+        settingsCoordinator.finishFlow = { [weak self, weak settingsCoordinator] in
+            self?.removeDependency(settingsCoordinator)
+            self?.finishFlow?()
+        }
+        addDependency(settingsCoordinator)
+        mainTabBarController.viewControllers = [settingsCoordinator.rootController]
         navigation.pushViewController(mainTabBarController, animated: false)
         navigation.navigationBar.isHidden = true
     }

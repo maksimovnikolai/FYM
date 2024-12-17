@@ -77,7 +77,7 @@ protocol ScreenFactoryProtocol {
     func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
     func makeCreateAccountController(delegate: CreateAccountViewModelDelegate) -> UIViewController
     func makeMainTabBarController() -> UITabBarController
-    func makeSettingsController() -> UIViewController
+    func makeSettingsController(delegate: SettingsViewModelDelegate) -> UIViewController
 }
 
 final class ScreenFactory: ScreenFactoryProtocol {
@@ -102,8 +102,9 @@ final class ScreenFactory: ScreenFactoryProtocol {
         return mainTabBarController
     }
     
-    func makeSettingsController() -> UIViewController {
+    func makeSettingsController(delegate: SettingsViewModelDelegate) -> UIViewController {
         let viewModel = SettingsViewModel()
+        viewModel.delegate = delegate
         let settingsController = SettingsViewController(viewModel: viewModel)
         settingsController.delegate = viewModel
         return settingsController
