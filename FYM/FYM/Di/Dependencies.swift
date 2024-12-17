@@ -109,3 +109,18 @@ final class ScreenFactory: ScreenFactoryProtocol {
         return settingsController
     }
 }
+
+// MARK: - TabBarItemFactoryProtocol
+
+protocol TabBarItemFactoryProtocol {}
+
+extension TabBarItemFactoryProtocol {
+    func makeTabBarItem(navigation: UINavigationController, title: String, image: String, selectedImage: String) {
+        let tabBarItem = UITabBarItem(
+            title: title,
+            image: UIImage(systemName: image),
+            selectedImage: UIImage(systemName: selectedImage)
+        )
+        navigation.tabBarItem = tabBarItem
+    }
+}
