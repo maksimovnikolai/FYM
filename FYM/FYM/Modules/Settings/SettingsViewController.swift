@@ -35,4 +35,14 @@ final class SettingsViewController: UIViewController {
     override func loadView() {
         view = customView
     }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        customView.alertAction = { [weak self] in
+            let alert = UIAlertController(title: "", message: "Текущая версия приложения 1.0.1", preferredStyle: .alert)
+            let action = UIAlertAction(title: "Ok", style: .cancel)
+            alert.addAction(action)
+            self?.present(alert, animated: true)
+        }
+    }
 }
