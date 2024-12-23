@@ -38,13 +38,17 @@ final class MainTabBarCoordinator: BaseCoordinator {
 private extension MainTabBarCoordinator {
     func runMainTabBarFlow() {
         let mainTabBarController = screenFactory.makeMainTabBarController()
+        let moviesCoordinator = coordinatorFactory.makeMoviesCoordinator(screenFactory: screenFactory)
+        addDependency(moviesCoordinator)
+        
         let settingsCoordinator = coordinatorFactory.makeSettingsCoordinator(screenFactory: screenFactory)
         settingsCoordinator.finishFlow = { [weak self, weak settingsCoordinator] in
             self?.removeDependency(settingsCoordinator)
+            self?.removeDependency(moviesCoordinator)
             self?.finishFlow?()
         }
         addDependency(settingsCoordinator)
-        mainTabBarController.viewControllers = [settingsCoordinator.rootController]
+        mainTabBarController.viewControllers = [moviesCoordinator.rootController, settingsCoordinator.rootController]
         navigation.pushViewController(mainTabBarController, animated: false)
         navigation.navigationBar.isHidden = true
     }

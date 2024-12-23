@@ -50,6 +50,7 @@ protocol CoordinatorFactoryProtocol {
     func makeApplicationCoordinator(navigationController: UINavigationController, screenFactory: ScreenFactoryProtocol) -> ApplicationCoordinator
     func makeLoginCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> LoginCoordinator
     func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> MainTabBarCoordinator
+    func makeMoviesCoordinator(screenFactory: ScreenFactoryProtocol) -> MoviesCoordinator
     func makeSettingsCoordinator(screenFactory: ScreenFactoryProtocol) -> SettingsCoordinator
 }
 
@@ -66,6 +67,10 @@ final class CoordinatorFactory: CoordinatorFactoryProtocol {
         MainTabBarCoordinator(coordinatorFactory: self, screenFactory: screenFactory, navigation: navigation)
     }
     
+    func makeMoviesCoordinator(screenFactory: any ScreenFactoryProtocol) -> MoviesCoordinator {
+        MoviesCoordinator(screenFactory: screenFactory)
+    }
+    
     func makeSettingsCoordinator(screenFactory: any ScreenFactoryProtocol) -> SettingsCoordinator {
         SettingsCoordinator(screenFactory: screenFactory)
     }
@@ -77,6 +82,7 @@ protocol ScreenFactoryProtocol {
     func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
     func makeCreateAccountController(delegate: CreateAccountViewModelDelegate) -> UIViewController
     func makeMainTabBarController() -> UITabBarController
+    func makeMoviesController() -> UIViewController
     func makeSettingsController(delegate: SettingsViewModelDelegate) -> UIViewController
 }
 
@@ -100,6 +106,13 @@ final class ScreenFactory: ScreenFactoryProtocol {
     func makeMainTabBarController() -> UITabBarController {
         let mainTabBarController = MainTabBarController()
         return mainTabBarController
+    }
+    
+    func makeMoviesController() -> UIViewController {
+        let viewModel = MoviesViewModel()
+        let moviesController = MoviesViewController(viewModel: viewModel)
+        moviesController.delegate = viewModel
+        return moviesController
     }
     
     func makeSettingsController(delegate: SettingsViewModelDelegate) -> UIViewController {
