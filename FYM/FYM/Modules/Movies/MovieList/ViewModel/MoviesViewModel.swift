@@ -9,8 +9,23 @@ import Foundation
 
 protocol MoviesViewModelProtocol {}
 
-final class MoviesViewModel: MoviesViewModelProtocol {}
+final class MoviesViewModel: MoviesViewModelProtocol {
+    
+    // MARK: - Private properties
+    
+    private let networkManager: NetworkManagerProtocol
+
+    // MARK: - Init
+    
+    init(networkManager: NetworkManagerProtocol) {
+        self.networkManager = networkManager
+    }
+}
 
 // MARK: - MoviesViewDelegate
 
 extension MoviesViewModel: MoviesViewDelegate {}
+
+// MARK: - Private methods
+
+private extension MoviesViewModel {}
