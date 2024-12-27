@@ -15,12 +15,14 @@ final class MoviesCoordinator: BaseCoordinator {
     // MARK: - Private properties
     private let screenFactory: ScreenFactoryProtocol
     private let navigation: UINavigationController
+    private let networkManager: NetworkManagerProtocol
     
     // MARK: - Init
     
-    init(screenFactory: ScreenFactoryProtocol) {
+    init(screenFactory: ScreenFactoryProtocol, networkManager: NetworkManagerProtocol) {
         self.screenFactory = screenFactory
         self.navigation = UINavigationController()
+        self.networkManager = networkManager
         super.init()
         configureRootController()
     }
@@ -30,7 +32,7 @@ final class MoviesCoordinator: BaseCoordinator {
 
 private extension MoviesCoordinator {
     func configureRootController() {
-        let moviesController = screenFactory.makeMoviesController()
+        let moviesController = screenFactory.makeMoviesController(networkManager: networkManager)
         moviesController.navigationItem.title = "Фильмы 🍿"
         navigation.pushViewController(moviesController, animated: true)
         navigation.navigationBar.prefersLargeTitles = true

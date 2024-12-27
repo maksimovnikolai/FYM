@@ -13,6 +13,7 @@ final class ApplicationCoordinator: BaseCoordinator {
     private let navigationController: UINavigationController
     private let coordinatorFactory: CoordinatorFactoryProtocol
     private let screenFactory: ScreenFactoryProtocol
+    private let networkManager: NetworkManagerProtocol
     private var isLogin = true
     
     // MARK: - Init
@@ -20,11 +21,13 @@ final class ApplicationCoordinator: BaseCoordinator {
     init(
         navigationController: UINavigationController,
         coordinatorFactory: CoordinatorFactoryProtocol,
-        screenFactory: ScreenFactoryProtocol
+        screenFactory: ScreenFactoryProtocol,
+        networkManager: NetworkManagerProtocol
     ) {
         self.navigationController = navigationController
         self.coordinatorFactory = coordinatorFactory
         self.screenFactory = screenFactory
+        self.networkManager = networkManager
     }
     
     override func start() {
@@ -52,7 +55,7 @@ private extension ApplicationCoordinator {
     }
     
     func runTabBarFlow() {
-        let mainTabBarCoordinator = coordinatorFactory.makeMainTabBarCoordinator(navigation: navigationController, screenFactory: screenFactory)
+        let mainTabBarCoordinator = coordinatorFactory.makeMainTabBarCoordinator(navigation: navigationController, screenFactory: screenFactory, networkManager: networkManager)
         mainTabBarCoordinator.finishFlow = { [weak self, weak mainTabBarCoordinator] in
             self?.isLogin = false
             self?.start()

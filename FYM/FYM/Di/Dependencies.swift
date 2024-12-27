@@ -14,6 +14,7 @@ final class Di {
     private let navigationController: UINavigationController
     private let coordinatorFactory: CoordinatorFactoryProtocol
     private let screenFactory: ScreenFactoryProtocol
+    private let networkManager: NetworkManagerProtocol
     
     // MARK: - Init
     
@@ -22,6 +23,7 @@ final class Di {
         navigationController = UINavigationController()
         coordinatorFactory = CoordinatorFactory()
         screenFactory = ScreenFactory()
+        networkManager = NetworkManager()
     }
 }
 
@@ -36,7 +38,11 @@ extension Di: AppFactoryProtocol {
     func makeKeyWindowWithCoordinator(windowScene: UIWindowScene, completion: (ApplicationCoordinator) -> Void) {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        let coordinator = coordinatorFactory.makeApplicationCoordinator(navigationController: navigationController, screenFactory: screenFactory)
+        let coordinator = coordinatorFactory.makeApplicationCoordinator(
+            navigationController: navigationController,
+            screenFactory: screenFactory,
+            networkManager: networkManager
+        )
         completion(coordinator)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
@@ -47,28 +53,53 @@ extension Di: AppFactoryProtocol {
 // MARK: - CoordinatorsFactoryProtocol / Impl
 
 protocol CoordinatorFactoryProtocol {
-    func makeApplicationCoordinator(navigationController: UINavigationController, screenFactory: ScreenFactoryProtocol) -> ApplicationCoordinator
+    func makeApplicationCoordinator(
+        navigationController: UINavigationController,
+        screenFactory: ScreenFactoryProtocol,
+        networkManager: NetworkManagerProtocol
+    ) -> ApplicationCoordinator
     func makeLoginCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> LoginCoordinator
-    func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol) -> MainTabBarCoordinator
-    func makeMoviesCoordinator(screenFactory: ScreenFactoryProtocol) -> MoviesCoordinator
+    func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: ScreenFactoryProtocol, networkManager: NetworkManagerProtocol) -> MainTabBarCoordinator
+    func makeMoviesCoordinator(screenFactory: ScreenFactoryProtocol, networkManager: NetworkManagerProtocol) -> MoviesCoordinator
     func makeSettingsCoordinator(screenFactory: ScreenFactoryProtocol) -> SettingsCoordinator
 }
 
 final class CoordinatorFactory: CoordinatorFactoryProtocol {
-    func makeApplicationCoordinator(navigationController: UINavigationController, screenFactory: ScreenFactoryProtocol) -> ApplicationCoordinator {
-        ApplicationCoordinator(navigationController: navigationController, coordinatorFactory: self, screenFactory: screenFactory)
+    func makeApplicationCoordinator(
+        navigationController: UINavigationController,
+        screenFactory: ScreenFactoryProtocol,
+        networkManager: NetworkManagerProtocol
+    ) -> ApplicationCoordinator {
+        ApplicationCoordinator(
+            navigationController: navigationController,
+            coordinatorFactory: self,
+            screenFactory: screenFactory,
+            networkManager: networkManager
+        )
     }
     
-    func makeLoginCoordinator(navigation: UINavigationController, screenFactory: any ScreenFactoryProtocol) -> LoginCoordinator {
+    func makeLoginCoordinator(
+        navigation: UINavigationController,
+        screenFactory: any ScreenFactoryProtocol
+    ) -> LoginCoordinator {
         LoginCoordinator(navigation: navigation, screenFactory: screenFactory)
     }
     
-    func makeMainTabBarCoordinator(navigation: UINavigationController, screenFactory: any ScreenFactoryProtocol) -> MainTabBarCoordinator {
-        MainTabBarCoordinator(coordinatorFactory: self, screenFactory: screenFactory, navigation: navigation)
+    func makeMainTabBarCoordinator(
+        navigation: UINavigationController,
+        screenFactory: any ScreenFactoryProtocol,
+        networkManager: NetworkManagerProtocol
+    ) -> MainTabBarCoordinator {
+        MainTabBarCoordinator(
+            coordinatorFactory: self,
+            screenFactory: screenFactory,
+            navigation: navigation,
+            networkManager: networkManager
+        )
     }
     
-    func makeMoviesCoordinator(screenFactory: any ScreenFactoryProtocol) -> MoviesCoordinator {
-        MoviesCoordinator(screenFactory: screenFactory)
+    func makeMoviesCoordinator(screenFactory: any ScreenFactoryProtocol, networkManager: NetworkManagerProtocol) -> MoviesCoordinator {
+        MoviesCoordinator(screenFactory: screenFactory, networkManager: networkManager)
     }
     
     func makeSettingsCoordinator(screenFactory: any ScreenFactoryProtocol) -> SettingsCoordinator {
@@ -82,7 +113,7 @@ protocol ScreenFactoryProtocol {
     func makeLoginController(delegate: LoginViewModelDelegate) -> UIViewController
     func makeCreateAccountController(delegate: CreateAccountViewModelDelegate) -> UIViewController
     func makeMainTabBarController() -> UITabBarController
-    func makeMoviesController() -> UIViewController
+    func makeMoviesController(networkManager: NetworkManagerProtocol) -> UIViewController
     func makeSettingsController(delegate: SettingsViewModelDelegate) -> UIViewController
 }
 
@@ -108,8 +139,8 @@ final class ScreenFactory: ScreenFactoryProtocol {
         return mainTabBarController
     }
     
-    func makeMoviesController() -> UIViewController {
-        let viewModel = MoviesViewModel()
+    func makeMoviesController(networkManager: NetworkManagerProtocol) -> UIViewController {
+        let viewModel = MoviesViewModel(networkManager: networkManager)
         let moviesController = MoviesViewController(viewModel: viewModel)
         moviesController.delegate = viewModel
         return moviesController

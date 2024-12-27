@@ -15,17 +15,20 @@ final class MainTabBarCoordinator: BaseCoordinator {
     private let coordinatorFactory: CoordinatorFactoryProtocol
     private let screenFactory: ScreenFactoryProtocol
     private let navigation: UINavigationController
+    private let networkManager: NetworkManagerProtocol
     
     // MARK: - Init
     
     init(
         coordinatorFactory: CoordinatorFactoryProtocol,
         screenFactory: ScreenFactoryProtocol,
-        navigation: UINavigationController
+        navigation: UINavigationController,
+        networkManager: NetworkManagerProtocol
     ) {
         self.coordinatorFactory = coordinatorFactory
         self.screenFactory = screenFactory
         self.navigation = navigation
+        self.networkManager = networkManager
     }
     
     override func start() {
@@ -38,7 +41,7 @@ final class MainTabBarCoordinator: BaseCoordinator {
 private extension MainTabBarCoordinator {
     func runMainTabBarFlow() {
         let mainTabBarController = screenFactory.makeMainTabBarController()
-        let moviesCoordinator = coordinatorFactory.makeMoviesCoordinator(screenFactory: screenFactory)
+        let moviesCoordinator = coordinatorFactory.makeMoviesCoordinator(screenFactory: screenFactory, networkManager: networkManager)
         addDependency(moviesCoordinator)
         
         let settingsCoordinator = coordinatorFactory.makeSettingsCoordinator(screenFactory: screenFactory)
